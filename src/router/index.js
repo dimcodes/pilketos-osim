@@ -8,18 +8,29 @@ import { useSession } from "../services/session";
 import { useToast } from "../services/toast";
 
 const routes = [
-  { path: "/", name: "home", component: Home },
-  { path: "/login", name: "login", component: Login },
+  {
+    path: "/",
+    name: "home",
+    component: Home,
+    meta: { title: "Beranda" },
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: Login,
+    meta: { title: "Login Pemilih" },
+  },
   {
     path: "/vote",
     name: "vote",
     component: Vote,
-    meta: { requiresVoter: true },
+    meta: { requiresVoter: true, title: "Bilik Suara" },
   },
   {
     path: "/admin/login",
     name: "admin-login",
     component: () => import("../views/admin/Login.vue"),
+    meta: { title: "Login Admin" },
   },
   {
     path: "/admin",
@@ -57,6 +68,7 @@ const routes = [
     path: "/:pathMatch(.*)*",
     name: "404",
     component: NotFound,
+    meta: { title: "Halaman Tidak Ditemukan" },
   },
 ];
 
@@ -66,6 +78,12 @@ const router = createRouter({
 });
 
 router.beforeEach((to) => {
+  if (to.meta.title) {
+    document.title = `${to.meta.title} | Pilketom`;
+  } else {
+    document.title = "Pilketom";
+  }
+
   const { voter } = useSession();
   const { admin } = useAdminSession();
   const { showToast } = useToast();
