@@ -1,0 +1,49 @@
+.admin-shell button {
+  cursor: pointer;
+}
+
+.admin-shell button:disabled {
+  cursor: not-allowed;
+}
+
+.admin-shell .form-input {
+  display: block;
+  width: 100%;
+  border: 1px solid #dce5dd;
+  border-radius: 8px;
+  background: #fafbfa;
+  padding: 11px 13px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.admin-shell .form-input:focus {
+  border-color: #78a98a;
+  background: #fff;
+}
+
+.admin-shell .form-input::placeholder {
+  color: #a3afa5;
+}
+
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.15s ease;
+}
+
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-shell *,
+  .admin-shell *::before,
+  .admin-shell *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
