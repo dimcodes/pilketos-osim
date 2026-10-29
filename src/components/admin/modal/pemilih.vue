@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import ModalShell from './ModalShell.vue'
+import ModalShell from './shell.vue'
 
 const props = defineProps({
   initial: { type: Object, default: null },

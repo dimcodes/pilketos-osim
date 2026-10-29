@@ -1,5 +1,5 @@
-import { supabase } from "../../supabase";
-import { useAdminSession } from "./admin.session";
+import { supabase } from "../../lib/supabase";
+import { useAdminSession } from "./session";
 
 const { setAdmin } = useAdminSession();
 

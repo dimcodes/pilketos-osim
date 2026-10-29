@@ -1,4 +1,6 @@
-import { supabase } from "../../supabase";
+import { supabase } from "../../lib/supabase";
+
+const MISSING_CODES = ["PGRST202", "42883"];
 
 const fetchList = async (fn) => {
   try {
@@ -18,9 +20,28 @@ const callRpc = async (fn, args) => {
   }
 };
 
-export const fetchPaslons = () => fetchList("get_paslons");
+export const getPaslons = () => fetchList("get_paslons");
 
-export const fetchPemilihs = () => fetchList("get_pemilihs");
+export const getPemilihs = () => fetchList("get_pemilihs");
+
+export const getCounts = async () => {
+  try {
+    const { data, error } = await supabase.rpc("get_stats");
+
+    if (error) return { missing: MISSING_CODES.includes(error.code) };
+
+    const row = Array.isArray(data) ? data[0] : data;
+
+    return {
+      data: {
+        total: Number(row?.total) || 0,
+        sudah: Number(row?.sudah) || 0,
+      },
+    };
+  } catch {
+    return {};
+  }
+};
 
 export const savePemilih = (form) =>
   callRpc("save_pemilih", {
@@ -51,6 +72,3 @@ export const savePaslon = (form) => {
 };
 
 export const deletePaslon = (id) => callRpc("delete_paslon", { p_id: id });
-
-export const paslonFotoUrl = (nomor) =>
-  supabase.storage.from("paslon").getPublicUrl(`${nomor}.jpg`).data.publicUrl;

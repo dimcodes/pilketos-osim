@@ -1,16 +1,15 @@
 <script setup>
 import { computed } from 'vue'
 import { Users, CheckCircle2, AlertCircle, BarChart3 } from 'lucide-vue-next'
-import PageHeader from '../../components/admin/PageHeader.vue'
-import StatCard from '../../components/admin/StatCard.vue'
-import VoteChart from '../../components/admin/VoteChart.vue'
-import { useAdminData } from '../../composables/useAdminData'
+import PageHeader from '../../../components/admin/ui/header.vue'
+import StatCard from '../../../components/admin/card/stat.vue'
+import VoteChart from '../../../components/admin/chart/vote.vue'
+import { useData } from '../../../composables/admin/data'
 
-const { paslons, pemilihs, ready } = useAdminData({ paslons: true, pemilihs: true })
+const { paslons, counts, ready } = useData({ paslons: true, counts: true })
 
 const stats = computed(() => {
-  const total = pemilihs.value.length
-  const sudah = pemilihs.value.reduce((count, p) => count + (p.sudah_memilih ? 1 : 0), 0)
+  const { total, sudah } = counts.value
   const ratio = total ? (sudah / total) * 100 : 0
 
   return { total, sudah, belum: total - sudah, ratio, percent: Math.round(ratio) }

@@ -1,12 +1,12 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
-import PageHeader from '../../components/admin/PageHeader.vue'
-import Pagination from '../../components/admin/Pagination.vue'
-import { useAdminData } from '../../composables/useAdminData'
+import PageHeader from '../../../components/admin/ui/header.vue'
+import Pagination from '../../../components/admin/ui/pagination.vue'
+import { useData } from '../../../composables/admin/data'
 
 const PAGE_SIZE = 50
 
-const { paslons, pemilihs, ready } = useAdminData({ paslons: true, pemilihs: true })
+const { paslons, pemilihs, ready } = useData({ paslons: true, pemilihs: true })
 
 const selectedNomor = ref(null)
 const currentPage = ref(1)

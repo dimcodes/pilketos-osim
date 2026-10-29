@@ -12,10 +12,10 @@ import {
   ListOrdered,
 } from 'lucide-vue-next'
 import { gsap } from 'gsap'
-import '../assets/admin.css'
-import { useAdminSession } from '../services/admin/admin.session'
-import { useToast } from '../services/toast'
-import { confirmAction } from '../services/confirm'
+import '../assets/css/admin.css'
+import { useAdminSession } from '../services/admin/session'
+import { useToast } from '../services/ui/toast'
+import { confirmAction } from '../services/ui/confirm'
 
 const navItems = [
   { to: { name: 'admin-dashboard' }, label: 'Dashboard', short: 'Dashboard', icon: LayoutDashboard },

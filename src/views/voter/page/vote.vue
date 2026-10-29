@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import Swal from 'sweetalert2'
 import { gsap } from 'gsap'
 import {
   ChevronDown,
@@ -11,11 +10,14 @@ import {
   RefreshCw
 } from 'lucide-vue-next'
 
-import VoterHeader from '../components/Header.vue'
-import Footer from '../components/Footer.vue'
-import { useSession } from '../services/session'
-import { useToast } from '../services/toast'
-import { supabase } from '../supabase'
+import VoterHeader from '../../../components/voter/header.vue'
+import Footer from '../../../components/common/footer.vue'
+import { useSession } from '../../../services/voter/session'
+import { useToast } from '../../../services/ui/toast'
+import { supabase } from '../../../lib/supabase'
+import { paslonFoto } from '../../../lib/storage'
+import { getPaslons } from '../../../services/voter/paslon'
+import { confirmAction, warmConfirm } from '../../../services/ui/confirm'
 
 const router = useRouter()
 const { voter: sessionState, clearVoter } = useSession()
@@ -35,12 +37,6 @@ const loadingPaslons = ref(true)
 const loadError = ref(false)
 const retrying = ref(false)
 const voting = ref(false)
-  const fotoPaslon = (nomor) => {
-  return supabase.storage
-    .from('paslon')
-    .getPublicUrl(`${nomor}.jpg`)
-    .data.publicUrl
-}
 
 let ctx = null
 
@@ -53,6 +49,8 @@ onMounted(async () => {
   }
 
   voter.value = { ...sessionState.voter }
+
+  warmConfirm()
 
   await nextTick()
 
@@ -80,9 +78,7 @@ async function loadPaslons() {
   loadError.value = false
 
   try {
-    const { data, error } = await supabase.rpc('get_paslons', {
-      p_token: sessionState.voter?.token
-    })
+    const { data, error } = await getPaslons(sessionState.voter?.token)
 
     if (error) {
       if (error.code === '28000') {
@@ -98,7 +94,7 @@ async function loadPaslons() {
       id: p.id,
       no_urut: p.nomor_urut,
       nama_paslon: p.nama,
-      foto: fotoPaslon(p.nomor_urut),
+      foto: paslonFoto(p.nomor_urut),
       visi: p.visi || '',
       misi: Array.isArray(p.misi) ? p.misi : [],
       isOpen: false
@@ -222,19 +218,16 @@ async function handleVote(paslon) {
     return
   }
 
-  const result = await Swal.fire({
+  const confirmed = await confirmAction({
     title: `Pilih Paslon No. ${paslon.no_urut}?`,
     text: `Anda akan memilih ${paslon.nama_paslon}. Pilihan tidak dapat diubah setelah dikonfirmasi!`,
-    icon: 'warning',
-    showCancelButton: true,
-    reverseButtons: true,
-    confirmButtonText: 'Ya, Coblos!',
-    cancelButtonText: 'Batal',
-    confirmButtonColor: '#05ad53',
-    cancelButtonColor: '#ef4444'
+    confirmText: 'Ya, Coblos!',
+    confirmColor: '#05ad53',
+    cancelColor: '#ef4444',
+    reverse: true
   })
 
-  if (!result.isConfirmed || voting.value) return
+  if (!confirmed || voting.value) return
   voting.value = true
 
   try {

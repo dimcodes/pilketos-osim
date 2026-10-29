@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Home, AlertTriangle } from 'lucide-vue-next'
 import gsap from 'gsap'
-import Footer from '../components/Footer.vue'
+import Footer from '../../components/common/footer.vue'
 
 const router = useRouter()
 const cardRef = ref(null)
@@ -31,7 +31,7 @@ const goHome = () => {
 </script>
 
 <template>
-  <div class="relative min-h-screen flex flex-col items-center justify-center p-6 bg-fixed bg-cover bg-center" style="background-image: url('../assets/lap.png');">
+  <div class="bg-lap relative min-h-screen flex flex-col items-center justify-center p-6 bg-fixed bg-cover bg-center">
     
     <!-- Background overlay -->
     <div class="absolute inset-0 bg-white/90 backdrop-blur-[3px]"></div>

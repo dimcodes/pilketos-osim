@@ -1,19 +1,19 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { LogIn, AlertCircle } from 'lucide-vue-next'
+import { ShieldCheck, AlertCircle, Lock } from 'lucide-vue-next'
 import gsap from 'gsap'
-import Footer from '../components/Footer.vue'
-import { validateVoterLogin } from '../services/auth'
-import { useSession } from '../services/session'
-import { useToast } from '../services/toast'
+import Footer from '../../../components/common/footer.vue'
+import { validateAdminLogin } from '../../../services/admin/auth'
+import { useAdminSession } from '../../../services/admin/session'
+import { useToast } from '../../../services/ui/toast'
 
 const router = useRouter()
-const { voter: sessionState } = useSession()
+const { admin: sessionState } = useAdminSession()
 const { showToast } = useToast()
 
 const username = ref('')
-const tanggalLahir = ref('')
+const password = ref('')
 const loading = ref(false)
 const errorMessage = ref('')
 
@@ -24,8 +24,8 @@ const descRef = ref(null)
 const formRef = ref(null)
 
 onMounted(() => {
-  if (sessionState.voter) {
-    router.push('/vote')
+  if (sessionState.admin) {
+    router.push('/admin/dashboard')
     return
   }
 
@@ -42,44 +42,47 @@ onMounted(() => {
 })
 
 const handleLogin = async () => {
-  if (loading.value) return
   loading.value = true
   errorMessage.value = ''
-  const result = await validateVoterLogin(username.value, tanggalLahir.value)
+
+  const result = await validateAdminLogin(username.value, password.value)
+
   if (!result.success) {
     errorMessage.value = result.message
     loading.value = false
-    username.value = ''
-    tanggalLahir.value = ''
     gsap.fromTo(cardRef.value, { x: -8 }, { x: 8, duration: 0.1, yoyo: true, repeat: 3, clearProps: 'x' })
     return
   }
 
   gsap.to(cardRef.value, { scale: 0.98, duration: 0.1, yoyo: true, repeat: 1 })
+
   setTimeout(() => {
     loading.value = false
-    router.push('/vote')
+    showToast('Login Admin Berhasil!', 'success')
+    router.push('/admin/dashboard')
   }, 250)
 }
 </script>
 
 <template>
-  <div class="relative min-h-screen flex flex-col items-center justify-center p-6 bg-fixed bg-cover bg-center" style="background-image: url('../assets/lap.png');">
-   <div class="absolute inset-0 bg-white/90 backdrop-blur-[3px]"></div>
+  <div class="bg-lap relative min-h-screen flex flex-col items-center justify-center p-6 bg-fixed bg-cover bg-center">
+    <div class="absolute inset-0 bg-white/80 backdrop-blur-[3px]"></div>
+    
     <div 
       ref="cardRef" 
-      class="relative z-10 w-full max-w-md bg-white/95 border border-slate-300/80 rounded-3xl p-8 md:p-10 shadow-2xl shadow-slate-950/15 backdrop-blur-md opacity-0"
+      class="relative z-10 w-full max-w-md bg-white/95 border border-slate-300/80 rounded-3xl p-8 md:p-10 shadow-2xl shadow-slate-950/25 backdrop-blur-md opacity-0"
     >
       
       <div class="text-center mb-6">
-        <div ref="badgeRef" class="inline-flex items-center px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold mb-4 shadow-sm opacity-0">
-          Autentikasi Pemilih
+        <div ref="badgeRef" class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-800 text-xs font-semibold mb-4 shadow-sm opacity-0">
+          <ShieldCheck class="w-4 h-4" />
+          <span>Panel Administrator</span>
         </div>
         <h1 ref="titleRef" class="text-3xl font-extrabold text-[var(--text-main)] tracking-tight opacity-0">
-          Masuk untuk Memilih
+          Login Admin
         </h1>
         <p ref="descRef" class="text-[var(--text-muted)] text-sm mt-2 opacity-0">
-          Silakan masukkan username dan tanggal lahir yang terdaftar.
+          Masukkan username dan kata sandi pengelola sistem.
         </p>
       </div>
 
@@ -101,25 +104,26 @@ const handleLogin = async () => {
         
         <div class="opacity-0">
           <label class="block text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-2">
-            Username
+            Username Admin
           </label>
           <input 
             v-model="username"
             type="text"
-            placeholder="Contoh: user123"
-            class="w-full px-4 py-3.5 bg-slate-50/50 border border-slate-300 rounded-2xl text-[var(--text-main)] placeholder-slate-400 focus:outline-none focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)]/20 transition-all text-sm font-medium"
+            placeholder="Masukkan username"
+            class="w-full px-4 py-3.5 bg-slate-50/50 border border-slate-300 rounded-2xl text-[var(--text-main)] placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 transition-all text-sm font-medium"
             required
           />
         </div>
 
         <div class="opacity-0">
           <label class="block text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-2">
-            Tanggal Lahir
+            Password
           </label>
           <input 
-            v-model="tanggalLahir"
-            type="date"
-            class="w-full px-4 py-3.5 bg-slate-50/50 border border-slate-300 rounded-2xl text-[var(--text-main)] focus:outline-none focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-color)]/20 transition-all text-sm font-medium cursor-pointer"
+            v-model="password"
+            type="password"
+            placeholder="••••••••"
+            class="w-full px-4 py-3.5 bg-slate-50/50 border border-slate-300 rounded-2xl text-[var(--text-main)] placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 transition-all text-sm font-medium"
             required
           />
         </div>
@@ -128,12 +132,12 @@ const handleLogin = async () => {
           <button 
             type="submit"
             :disabled="loading"
-            class="w-full py-4 px-6 rounded-2xl bg-[var(--primary-color)] hover:bg-[var(--primary-hover)] text-white font-semibold shadow-lg shadow-emerald-950/25 transition-all duration-200 active:scale-95 flex items-center justify-center space-x-2 text-base cursor-pointer disabled:opacity-50"
+            class="w-full py-4 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg shadow-indigo-950/25 transition-all duration-200 active:scale-95 flex items-center justify-center space-x-2 text-base cursor-pointer disabled:opacity-50"
           >
-            <span v-if="loading">Memeriksa Data...</span>
+            <span v-if="loading">Memeriksa Kredensial...</span>
             <span v-else class="flex items-center space-x-2">
-              <span>Masuk & Mulai Voting</span>
-              <LogIn class="w-5 h-5 ml-1" />
+              <span>Masuk ke Dashboard</span>
+              <Lock class="w-5 h-5 ml-1" />
             </span>
           </button>
         </div>
@@ -142,7 +146,7 @@ const handleLogin = async () => {
 
     </div>
 
-    <Footer class="absolute bottom-4 z-10" />
+    <Footer class="absolute bottom-4 z-10 text-white/80" />
 
   </div>
 </template>

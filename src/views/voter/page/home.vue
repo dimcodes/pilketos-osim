@@ -1,9 +1,13 @@
 <script setup>
+import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import Footer from '../components/Footer.vue'
+import Footer from '../../../components/common/footer.vue'
 import { ArrowRight } from 'lucide-vue-next'
+import { prefetch } from '../../../router/load'
 
 const router = useRouter()
+
+onMounted(() => prefetch('login', 'vote'))
 
 const keLogin = () => {
   router.push('/login')
@@ -11,7 +15,7 @@ const keLogin = () => {
 </script>
 
 <template>
-  <div class="relative min-h-screen flex flex-col items-center justify-center p-6 bg-cover bg-center" style="background-image: url('../assets/lap.png');">
+  <div class="bg-lap relative min-h-screen flex flex-col items-center justify-center p-6 bg-cover bg-center">
     
     <div class="absolute inset-0 bg-white/75 backdrop-blur-[2px]"></div>
 

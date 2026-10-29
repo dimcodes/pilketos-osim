@@ -1,5 +1,6 @@
-import { supabase } from "../supabase";
+import { supabase } from "../../lib/supabase";
 import { useSession } from "./session";
+import { warmPaslons } from "./paslon";
 
 const { setVoter } = useSession();
 
@@ -24,6 +25,8 @@ export const validateVoterLogin = async (username, tanggalLahir) => {
       kelas: data.kelas,
       username: data.username,
     });
+
+    warmPaslons(data.token);
 
     return { success: true };
   } catch {

@@ -1,4 +1,5 @@
 import { reactive, readonly } from "vue";
+import { clearPaslons } from "./paslon";
 
 const KEY = "voter_session";
 
@@ -21,7 +22,10 @@ const setVoter = (data) => {
   } catch {}
 };
 
-const clearVoter = () => setVoter(null);
+const clearVoter = () => {
+  clearPaslons();
+  setVoter(null);
+};
 
 export const useSession = () => ({
   voter: readonly(state),

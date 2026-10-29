@@ -1,14 +1,14 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { Plus, Edit3, Trash2, Search } from 'lucide-vue-next'
-import PageHeader from '../../components/admin/PageHeader.vue'
-import PemilihFormModal from '../../components/admin/PemilihFormModal.vue'
-import { useAdminData } from '../../composables/useAdminData'
-import { savePemilih, deletePemilih } from '../../services/admin/admin.api'
-import { confirmAction } from '../../services/confirm'
-import { useToast } from '../../services/toast'
+import PageHeader from '../../../components/admin/ui/header.vue'
+import ModalPemilih from '../../../components/admin/modal/pemilih.vue'
+import { useData } from '../../../composables/admin/data'
+import { savePemilih, deletePemilih } from '../../../services/admin/api'
+import { confirmAction } from '../../../services/ui/confirm'
+import { useToast } from '../../../services/ui/toast'
 
-const { pemilihs, ready, refresh } = useAdminData({ pemilihs: true })
+const { pemilihs, ready, refresh } = useData({ pemilihs: true })
 const { showToast } = useToast()
 
 const searchQuery = ref('')
@@ -186,7 +186,7 @@ const handleDelete = async (id) => {
       </div>
     </div>
 
-    <PemilihFormModal
+    <ModalPemilih
       v-if="modal.open"
       :initial="modal.data"
       :saving="saving"

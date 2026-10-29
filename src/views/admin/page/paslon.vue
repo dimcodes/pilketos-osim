@@ -1,14 +1,15 @@
 <script setup>
 import { ref } from 'vue'
 import { Plus, Trash2 } from 'lucide-vue-next'
-import PageHeader from '../../components/admin/PageHeader.vue'
-import PaslonFormModal from '../../components/admin/PaslonFormModal.vue'
-import { useAdminData } from '../../composables/useAdminData'
-import { savePaslon, deletePaslon, paslonFotoUrl } from '../../services/admin/admin.api'
-import { confirmAction } from '../../services/confirm'
-import { useToast } from '../../services/toast'
+import PageHeader from '../../../components/admin/ui/header.vue'
+import ModalPaslon from '../../../components/admin/modal/paslon.vue'
+import { useData } from '../../../composables/admin/data'
+import { savePaslon, deletePaslon } from '../../../services/admin/api'
+import { paslonFoto } from '../../../lib/storage'
+import { confirmAction } from '../../../services/ui/confirm'
+import { useToast } from '../../../services/ui/toast'
 
-const { paslons, ready, refresh } = useAdminData({ paslons: true })
+const { paslons, ready, refresh } = useData({ paslons: true })
 const { showToast } = useToast()
 
 const modal = ref({ open: false, data: null })
@@ -92,7 +93,7 @@ const handleDelete = async (id) => {
       >
         <div class="relative aspect-[16/9] overflow-hidden bg-[#e9eeea]">
           <img
-            :src="paslonFotoUrl(p.nomor_urut)"
+            :src="paslonFoto(p.nomor_urut)"
             :alt="p.nama"
             class="h-full w-full object-cover"
             loading="lazy"
@@ -148,7 +149,7 @@ const handleDelete = async (id) => {
       {{ ready ? 'Belum ada pasangan calon.' : 'Memuat data...' }}
     </div>
 
-    <PaslonFormModal
+    <ModalPaslon
       v-if="modal.open"
       :initial="modal.data"
       :saving="saving"
